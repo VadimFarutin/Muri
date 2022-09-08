@@ -63,6 +63,8 @@ flags.DEFINE_string('schedule', 'fifo',
                 6.antman, AntMan
                 7.themis, Themis
                 8.multi-resource-blossom-same-gpu(-unaware), match jobs with same #GPU using blossom algorithm using gputime (unaware job duration)
+                9.multi-resource-blossom-same-gpu-shortest, match jobs with same #GPU using blossom algorithm using remaining time
+                10.multi-resource-blossom-same-gpu-fifo, MURI with FIFO priorities
                 Default is fifo''')
 flags.DEFINE_integer('num_switch', 1, 
                 '''Part of cluster spec: the number of switches in this cluster, default is 1''')
@@ -930,7 +932,7 @@ def gittins_sim_jobs(job_dist_data, gputime=False, static_delta=True):
         next_gittins_unit += event_time
         LOG.checkpoint(event_time)
 
-def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, ordering=1, blossom=True):
+def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, ordering=1, blossom=True, fifo=False):
     '''
     new jobs are added to the end of the ending queue
     but in the queue, shortest (gpu) job first be served
@@ -1029,7 +1031,8 @@ def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, orde
                     else:
                         rjob['sort_val']=rjob['total_executed_time']
         #sort jobs with shortest first
-        JOBS.runnable_jobs.sort(key = lambda e:e.__getitem__('sort_val'))
+        if not fifo:
+            JOBS.runnable_jobs.sort(key = lambda e:e.__getitem__('sort_val'))
         
         run_jobs = list()
         preempt_jobs = list()
@@ -2239,10 +2242,16 @@ def main():
         dlas_sim_jobs(True)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu':
         multi_resource_blossom_same_sim_jobs(True)
+    elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-shortest':
+        multi_resource_blossom_same_sim_jobs(False)
+    elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-fifo':
+        multi_resource_blossom_same_sim_jobs(True, fifo=True)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware':
         multi_resource_blossom_same_sim_jobs(True, know_duration=False)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware-worstordering':
         multi_resource_blossom_same_sim_jobs(True, know_duration=False, ordering=2)
+    elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware-randomordering':
+        multi_resource_blossom_same_sim_jobs(True, know_duration=False, ordering=3)
     elif FLAGS.schedule == 'multi-resource-gpu-unaware':
         multi_resource_blossom_same_sim_jobs(True, know_duration=False, blossom=False)
     elif FLAGS.schedule == 'antman':
