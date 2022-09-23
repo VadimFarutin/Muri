@@ -154,6 +154,38 @@ def draw4(title:str, name_lists:list, lists:list, ncol=4):
     plt.tick_params(axis='both', which='major', labelsize=fontsizeValue)
     plt.legend([l1, l2, l3, l4], name_lists, loc = 'upper right', fontsize=legendfontsizeValue, ncol=ncol, frameon=False)
 
+def draw5(title:str, name_lists:list, lists:list, ncol=3):
+    plt.clf()
+    plt.rc('font',**{'size': 42, 'family': 'Arial' })
+    plt.rc('pdf',fonttype = 42)
+    trace = [str(i) for i in range(1, len(lists[0]) + 1)]
+    x = np.arange(len(trace))  # the label locations
+    total_width, n = 0.45, 3
+    width = total_width / n
+    x = x - (total_width - width) / 2
+    fig, (ax1) = plt.subplots(1, 1, sharex=True)
+    plt.figure(figsize=(16, 8))
+    plt.grid(b=True, axis='y')
+    l1 = plt.bar(x-2.0*width, lists[0], width, edgecolor='black', linewidth=2.0)
+    l2 = plt.bar(x-1.0*width, lists[1], width, edgecolor='black', linewidth=2.0)
+    l3 = plt.bar(x          , lists[2], width, edgecolor='black', linewidth=2.0)
+    l4 = plt.bar(x+1.0*width, lists[3], width, edgecolor='black', linewidth=2.0)
+    l5 = plt.bar(x+2.0*width, lists[4], width, edgecolor='black', linewidth=2.0)
+    plt.xticks(x, trace, fontsize=fontsizeValue)
+    plt.xlabel("Trace ID", fontsize=fontsizeValue)
+    plt.ylabel(title, fontsize=fontsizeValue)
+    plt.ylim(0, max([max(i) for i in lists])*3/2) # 3.2/2 for fig 10; otherwise 5/4
+    if max([max(i) for i in lists])*3/2>4:
+        y_major_locator = plt.MultipleLocator(2)
+        ax = plt.gca()
+        ax.yaxis.set_major_locator(y_major_locator)
+    else:
+        y_major_locator = plt.MultipleLocator(1)
+        ax = plt.gca()
+        ax.yaxis.set_major_locator(y_major_locator)
+    plt.tick_params(axis='both', which='major', labelsize=fontsizeValue)
+    plt.legend([l1, l2, l3, l4, l5], name_lists, loc = 'upper right', fontsize=legendfontsizeValue, ncol=ncol, frameon=False)
+
 
 draw3('Normalized\nAverage JCT', ['Muri-L', 'Muri-L w/ worst ordering', 'Muri-L w/o Blossom'], [Fig11_Muri_L_JCT, Fig11_Muri_L_w_worstordering_JCT, Fig11_Muri_L_wo_blossom_JCT], 1)
 plt.savefig("Fig11a.pdf", bbox_inches='tight')
