@@ -11,17 +11,21 @@ import numpy as np
 Fig11_Muri_L_JCT_raw = [1072009.71,2544642.351,88686.97313,429174.8679]
 Fig11_Muri_L_w_worstordering_JCT_raw = [1482465.078,3274256.088,146324.4084,614727.4696]
 Fig11_Muri_L_wo_blossom_JCT_raw = [1192784.955,2771637.972,96016.95407,487577.6359]
+Fig11_Muri_L_w_randomordering_JCT_raw = [1202485.359728,83053.498439,116918.580023,149771.941310]
 Fig11_Muri_L_Makespan_raw = [18593245.706217,32826803.046468,8174135.28,10918239.071764]
 Fig11_Muri_L_w_worstordering_Makespan_raw = [21797275.497465,38550614.779056,8174135.28,11968562.600926]
 Fig11_Muri_L_wo_blossom_Makespan_raw = [19653377.905142,34035577.294260,8174135.28,11323021.724947]
+Fig11_Muri_L_w_randomordering_Makespan_raw = [19538248.365127,3317806.269501,8174135.280030,3974687.652737]
 
 # Fig 12 number of jobs in one group
 # [trace1_pr, trace2_pr, trace3_pr, trace4_pr]
 Fig12_antman_JCT_raw = [9808250.677,18163389.280198,2674393.018,4676092.801]
+Fig12_Muri_L_1_JCT_raw = [5351580.741940,9144239.013593,2234183.320492,3159277.541659]
 Fig12_Muri_L_2_JCT_raw = [2624732.58,5243437.378,1348968.422,2170262.136]
 Fig12_Muri_L_3_JCT_raw = [2738962.215,5078885.537,1242056.648,1994350.657]
 Fig12_Muri_L_4_JCT_raw = [2141936.535,4152485.536,921094.7449,1488033.596]
 Fig12_antman_Makespan_raw = [20285085.619635,48327650.120433,5799634.744,11793469.427804]
+Fig12_Muri_L_1_Makespan_raw = [23241864.301464,47720363.102038,6780998.808936,13603505.848460]
 Fig12_Muri_L_2_Makespan_raw = [18845825.639380,36514321.551734,5244800.59,11141527.953587]
 Fig12_Muri_L_3_Makespan_raw = [17773101.828110,36971546.424126,5175874.982,10836071.391281]
 Fig12_Muri_L_4_Makespan_raw = [16639500.393368,31782578.758801,4403652.203,10104721.762665]
@@ -39,16 +43,20 @@ Fig13_Muri_L_raw = [342921.6979,233034.5164,101383.3536,88686.97313]
 Fig11_Muri_L_JCT = [1,1,1,1]
 Fig11_Muri_L_w_worstordering_JCT = [a/b for a,b in zip(Fig11_Muri_L_w_worstordering_JCT_raw, Fig11_Muri_L_JCT_raw)]
 Fig11_Muri_L_wo_blossom_JCT = [a/b for a,b in zip(Fig11_Muri_L_wo_blossom_JCT_raw, Fig11_Muri_L_JCT_raw)]
+Fig11_Muri_L_w_randomordering_JCT = [a/b for a,b in zip(Fig11_Muri_L_w_randomordering_JCT_raw, Fig11_Muri_L_JCT_raw)]
 Fig11_Muri_L_Makespan = [1,1,1,1]
 Fig11_Muri_L_w_worstordering_Makespan = [a/b for a,b in zip(Fig11_Muri_L_w_worstordering_Makespan_raw, Fig11_Muri_L_Makespan_raw)]
 Fig11_Muri_L_wo_blossom_Makespan = [a/b for a,b in zip(Fig11_Muri_L_wo_blossom_Makespan_raw, Fig11_Muri_L_Makespan_raw)]
+Fig11_Muri_L_w_randomordering_Makespan = [a/b for a,b in zip(Fig11_Muri_L_w_randomordering_Makespan_raw, Fig11_Muri_L_Makespan_raw)]
 
 # Fig 12 number of jobs in one group
 Fig12_antman_JCT = [a/b for a,b in zip(Fig12_antman_JCT_raw, Fig12_Muri_L_4_JCT_raw)]
+Fig12_Muri_L_1_JCT = [a/b for a,b in zip(Fig12_Muri_L_1_JCT_raw, Fig12_Muri_L_4_JCT_raw)]
 Fig12_Muri_L_2_JCT = [a/b for a,b in zip(Fig12_Muri_L_2_JCT_raw, Fig12_Muri_L_4_JCT_raw)]
 Fig12_Muri_L_3_JCT = [a/b for a,b in zip(Fig12_Muri_L_3_JCT_raw, Fig12_Muri_L_4_JCT_raw)]
 Fig12_Muri_L_4_JCT = [1,1,1,1]
 Fig12_antman_Makespan = [a/b for a,b in zip(Fig12_antman_Makespan_raw, Fig12_Muri_L_4_Makespan_raw)]
+Fig12_Muri_L_1_Makespan = [a/b for a,b in zip(Fig12_Muri_L_1_Makespan_raw, Fig12_Muri_L_4_Makespan_raw)]
 Fig12_Muri_L_2_Makespan = [a/b for a,b in zip(Fig12_Muri_L_2_Makespan_raw, Fig12_Muri_L_4_Makespan_raw)]
 Fig12_Muri_L_3_Makespan = [a/b for a,b in zip(Fig12_Muri_L_3_Makespan_raw, Fig12_Muri_L_4_Makespan_raw)]
 Fig12_Muri_L_4_Makespan = [1,1,1,1]
@@ -187,13 +195,13 @@ def draw5(title:str, name_lists:list, lists:list, ncol=3):
     plt.legend([l1, l2, l3, l4, l5], name_lists, loc = 'upper right', fontsize=legendfontsizeValue, ncol=ncol, frameon=False)
 
 
-draw3('Normalized\nAverage JCT', ['Muri-L', 'Muri-L w/ worst ordering', 'Muri-L w/o Blossom'], [Fig11_Muri_L_JCT, Fig11_Muri_L_w_worstordering_JCT, Fig11_Muri_L_wo_blossom_JCT], 1)
+draw4('Normalized\nAverage JCT', ['Muri-L', 'Muri-L w/ worst ordering', 'Muri-L w/o Blossom', 'Muri-L w/ random ordering'], [Fig11_Muri_L_JCT, Fig11_Muri_L_w_worstordering_JCT, Fig11_Muri_L_wo_blossom_JCT, Fig11_Muri_L_w_randomordering_JCT], 1)
 plt.savefig("Fig11a.pdf", bbox_inches='tight')
-draw3('Normalized\nMakespan', ['Muri-L', 'Muri-L w/ worst ordering', 'Muri-L w/o Blossom'], [Fig11_Muri_L_Makespan, Fig11_Muri_L_w_worstordering_Makespan, Fig11_Muri_L_wo_blossom_Makespan], 1)
+draw4('Normalized\nMakespan', ['Muri-L', 'Muri-L w/ worst ordering', 'Muri-L w/o Blossom', 'Muri-L w/ random ordering'], [Fig11_Muri_L_Makespan, Fig11_Muri_L_w_worstordering_Makespan, Fig11_Muri_L_wo_blossom_Makespan, Fig11_Muri_L_w_randomordering_Makespan], 1)
 plt.savefig("Fig11b.pdf", bbox_inches='tight')
-draw4('Normalized\nAverage JCT', ['AntMan', 'Muri-L-2', 'Muri-L-3', 'Muri-L-4'], [Fig12_antman_JCT,Fig12_Muri_L_2_JCT,Fig12_Muri_L_3_JCT,Fig12_Muri_L_4_JCT], 2)
+draw5('Normalized\nAverage JCT', ['AntMan', 'Muri-L-1', 'Muri-L-2', 'Muri-L-3', 'Muri-L-4'], [Fig12_antman_JCT,Fig12_Muri_L_1_JCT,Fig12_Muri_L_2_JCT,Fig12_Muri_L_3_JCT,Fig12_Muri_L_4_JCT], 2)
 plt.savefig("Fig12a.pdf", bbox_inches='tight')
-draw4('Normalized\nMakespan', ['AntMan', 'Muri-L-2', 'Muri-L-3', 'Muri-L-4'], [Fig12_antman_Makespan,Fig12_Muri_L_2_Makespan,Fig12_Muri_L_3_Makespan,Fig12_Muri_L_4_Makespan], 2)
+draw5('Normalized\nMakespan', ['AntMan', 'Muri-L-1', 'Muri-L-2', 'Muri-L-3', 'Muri-L-4'], [Fig12_antman_Makespan,Fig12_Muri_L_1_Makespan,Fig12_Muri_L_2_Makespan,Fig12_Muri_L_3_Makespan,Fig12_Muri_L_4_Makespan], 2)
 plt.savefig("Fig12b.pdf", bbox_inches='tight')
 
 draw1('Speedup of\nAverage JCT', ['Speedup w.r.t. SRTF'], [Fig13_SRTF],'C0', 1)
