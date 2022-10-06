@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy
+import random
 import math
 import flags
 import copy
@@ -134,7 +134,8 @@ class _Packing(object):
                     TT_all = TT
                     self.best_permutation = (jobs[0], None, jobs[1])
         elif ordering==3: # random ordering
-            permutation = numpy.random.permutation(jobs)
+            permutation = copy.deepcopy(jobs)
+            random.shuffle(permutation)
             TT = 0.0
             if FLAGS.multi_resource==4 and len(jobs[0].resource_time)==3:
                 round = 2
