@@ -19,6 +19,7 @@ import log
 import cvxpy as cp
 from cvxpy import SolverError
 from matching import Blossom_Same, _Packing
+from jobs import JobsCompareMethod
 
 sys.setrecursionlimit(1000000000)
 # import hosts
@@ -932,7 +933,7 @@ def gittins_sim_jobs(job_dist_data, gputime=False, static_delta=True):
         next_gittins_unit += event_time
         LOG.checkpoint(event_time)
 
-def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, ordering=1, blossom=True, fifo=False):
+def multi_resource_blossom_same_sim_jobs(jobs_compare_method=JobsCompareMethod.SRTF, know_duration=True, ordering=1, blossom=True):
     '''
     new jobs are added to the end of the ending queue
     but in the queue, shortest (gpu) job first be served
@@ -1005,7 +1006,7 @@ def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, orde
                 rjob['total_executed_time'] = float(rjob['total_executed_time'] + event_time - rjob['last_check_time'])
                 rjob['last_check_time'] = event_time
                 rjob['remaining_time'] = rjob['remaining_iteration'] * rjob['iteration_time']
-                if gputime:
+                if jobs_compare_method == JobsCompareMethod.SRSF:
                     rjob['remaining_gputime'] = float(rjob['remaining_time'] * rjob['num_gpu'])
                     if not know_duration:
                         rjob['total_executed_gputime'] = float(rjob['total_executed_time'] * rjob['num_gpu'])
@@ -1021,18 +1022,21 @@ def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, orde
                 pass
             if rjob['status'] != 'END':
                 if know_duration: 
-                    if gputime:
+                    if jobs_compare_method == JobsCompareMethod.SJF:
+                        rjob['sort_val']=rjob['duration']
+                    elif jobs_compare_method == JobsCompareMethod.SRSF:
                         rjob['sort_val']=rjob['remaining_gputime']
-                    else:
+                    elif jobs_compare_method == JobsCompareMethod.SRTF:
                         rjob['sort_val']=rjob['remaining_time']
+                    else: # jobs_compare_method == JobsCompareMethod.FIFO
+                        rjob['sort_val']=rjob['submit_time']
                 else:
-                    if gputime:
+                    if jobs_compare_method == JobsCompareMethod.SRSF:
                         rjob['sort_val']=rjob['total_executed_gputime']
                     else:
                         rjob['sort_val']=rjob['total_executed_time']
-        #sort jobs with shortest first
-        if not fifo:
-            JOBS.runnable_jobs.sort(key = lambda e:e.__getitem__('sort_val'))
+        #sort jobs according to the chosen method
+        JOBS.runnable_jobs.sort(key = lambda e:e.__getitem__('sort_val'))
         
         run_jobs = list()
         preempt_jobs = list()
@@ -1187,6 +1191,9 @@ def multi_resource_blossom_same_sim_jobs(gputime=False, know_duration=True, orde
                 if rjob['status'] == 'RUNNING':
                     preempt_jobs.append(rjob)
                 continue
+
+        if len(preempt_jobs) > 0:
+            print(f"len(preempt_jobs) = {len(preempt_jobs)}")
 
         for job in preempt_jobs:
             job['status'] = 'PENDING'
@@ -2241,19 +2248,21 @@ def main():
     elif FLAGS.schedule == 'dlas-gpu':
         dlas_sim_jobs(True)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu':
-        multi_resource_blossom_same_sim_jobs(True)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRSF)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-shortest':
-        multi_resource_blossom_same_sim_jobs(False)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRTF)
+    elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-sjf':
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SJF)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-fifo':
-        multi_resource_blossom_same_sim_jobs(True, fifo=True)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.FIFO)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware':
-        multi_resource_blossom_same_sim_jobs(True, know_duration=False)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRSF, know_duration=False)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware-worstordering':
-        multi_resource_blossom_same_sim_jobs(True, know_duration=False, ordering=2)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRSF, know_duration=False, ordering=2)
     elif FLAGS.schedule == 'multi-resource-blossom-same-gpu-unaware-randomordering':
-        multi_resource_blossom_same_sim_jobs(True, know_duration=False, ordering=3)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRSF, know_duration=False, ordering=3)
     elif FLAGS.schedule == 'multi-resource-gpu-unaware':
-        multi_resource_blossom_same_sim_jobs(True, know_duration=False, blossom=False)
+        multi_resource_blossom_same_sim_jobs(JobsCompareMethod.SRSF, know_duration=False, blossom=False)
     elif FLAGS.schedule == 'antman':
         antman_sim_jobs()
     elif FLAGS.schedule == 'themis':
