@@ -21,6 +21,7 @@ import time
 import sys
 import random
 import copy
+from enum import Enum, auto
 # import cluster
 # from switch import _Switch
 # from node import _Node
@@ -30,6 +31,12 @@ import copy
 # CLUSTER = cluster.CLUSTER
 import flags
 FLAGS = flags.FLAGS
+
+class JobsCompareMethod(Enum):
+    SJF = auto()
+    SRTF = auto()
+    SRSF = auto()
+    FIFO = auto()
 
 class _TFJobs(object):
 
