@@ -134,36 +134,42 @@ class _Packing(object):
                     TT_all = TT
                     self.best_permutation = (jobs[0], None, jobs[1])
         elif ordering==3: # random ordering
-            permutation = copy.deepcopy(jobs)
-            random.shuffle(permutation)
-            TT = 0.0
-            if FLAGS.multi_resource==4 and len(jobs[0].resource_time)==3:
-                round = 2
-                fi = [0 for _ in range(4*round+1)]
-                num_job = len(jobs)
-                for i in range(4*round):
-                    if (i+1)%4<num_job:
-                        fi[i+1] = max(fi[i+1], fi[i]+permutation[(i+1)%4].resource_time[2])
-                    if (i+2)%4<num_job:
-                        fi[i+1] = max(fi[i+1], fi[i]+permutation[(i+2)%4].resource_time[1])
-                    if i>0 and (i+3)%4<num_job:
-                        fi[i+1] = max(fi[i+1], fi[i-1]+permutation[(i+3)%4].resource_time[0])
-                    if i>=4 and math.isclose(fi[i+1]-fi[i-3], fi[i]-fi[i-4], rel_tol = 1e-3):
-                        TT = fi[i+1]-fi[i-3]
-                        break
-                if not(TT>0):
-                    TT = fi[4*round]-fi[4*round-4]
-                assert TT>0
-            else:
-                for i in range(FLAGS.multi_resource):
-                    max_num = 0.0
-                    for idx, val in enumerate(permutation):
-                        # print(i, idx, FLAGS.multi_resource, (i-idx+FLAGS.multi_resource)%FLAGS.multi_resource)
-                        max_num = max(max_num, val.resource_time[(i-idx+FLAGS.multi_resource)%FLAGS.multi_resource])
-                    TT += max_num
-            if TT < TT_all:
-                TT_all = TT
-                self.best_permutation = copy.deepcopy(permutation)
+            jobs_permutation = itertools.permutations(jobs)
+            i = 0
+            rnd_idx = random.randint(0, math.factorial(len(jobs)) - 1)
+            for permutation in jobs_permutation:
+                if i != rnd_idx:
+                    continue
+                i += 1
+
+                TT = 0.0
+                if FLAGS.multi_resource==4 and len(jobs[0].resource_time)==3:
+                    round = 2
+                    fi = [0 for _ in range(4*round+1)]
+                    num_job = len(jobs)
+                    for i in range(4*round):
+                        if (i+1)%4<num_job:
+                            fi[i+1] = max(fi[i+1], fi[i]+permutation[(i+1)%4].resource_time[2])
+                        if (i+2)%4<num_job:
+                            fi[i+1] = max(fi[i+1], fi[i]+permutation[(i+2)%4].resource_time[1])
+                        if i>0 and (i+3)%4<num_job:
+                            fi[i+1] = max(fi[i+1], fi[i-1]+permutation[(i+3)%4].resource_time[0])
+                        if i>=4 and math.isclose(fi[i+1]-fi[i-3], fi[i]-fi[i-4], rel_tol = 1e-3):
+                            TT = fi[i+1]-fi[i-3]
+                            break
+                    if not(TT>0):
+                        TT = fi[4*round]-fi[4*round-4]
+                    assert TT>0
+                else:
+                    for i in range(FLAGS.multi_resource):
+                        max_num = 0.0
+                        for idx, val in enumerate(permutation):
+                            # print(i, idx, FLAGS.multi_resource, (i-idx+FLAGS.multi_resource)%FLAGS.multi_resource)
+                            max_num = max(max_num, val.resource_time[(i-idx+FLAGS.multi_resource)%FLAGS.multi_resource])
+                        TT += max_num
+                if TT < TT_all:
+                    TT_all = TT
+                    self.best_permutation = copy.deepcopy(permutation)
         else: # no ordering
             permutation = sorted(jobs, key=lambda x: x.job_idx)
             TT = 0.0
