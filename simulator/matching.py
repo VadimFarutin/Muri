@@ -135,12 +135,12 @@ class _Packing(object):
                     self.best_permutation = (jobs[0], None, jobs[1])
         elif ordering==3: # random ordering
             jobs_permutation = itertools.permutations(jobs)
-            i = 0
+            i = -1
             rnd_idx = random.randint(0, math.factorial(len(jobs)) - 1)
             for permutation in jobs_permutation:
+                i += 1
                 if i != rnd_idx:
                     continue
-                i += 1
 
                 TT = 0.0
                 if FLAGS.multi_resource==4 and len(jobs[0].resource_time)==3:

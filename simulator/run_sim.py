@@ -9,6 +9,7 @@ import math
 import argparse
 import copy
 import os
+import random
 
 import numpy as np
 import util
@@ -2236,6 +2237,9 @@ def main():
     # lp.placement(JOBS.job_list[0])
     ''' Prepare jobs'''
     JOBS.prepare_job_start_events()
+
+    ''' Set random seed '''
+    random.seed(42)
 
     # used gpu number of jobs
     used_gpu = [8,4,2,1]
