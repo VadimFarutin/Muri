@@ -27,6 +27,19 @@ def my_cmp(x,y):
 def swap(x,y):
     return y,x
 
+class _RandomStore(object):
+    def __init__(self):
+        self.hash_to_int = dict()
+
+    def add(self, key, value):
+        self.hash_to_int[key] = value
+
+    def get(self, key):
+        return self.hash_to_int[key]
+
+    def exists(self, key):
+        return key in self.hash_to_int
+
 class _Packing(object): 
     class _MiniJob(object):
         '''
@@ -134,9 +147,15 @@ class _Packing(object):
                     TT_all = TT
                     self.best_permutation = (jobs[0], None, jobs[1])
         elif ordering==3: # random ordering
+            jobs_hash = hash(sorted(jobs, key=lambda x: x.job_idx))
+            if RandomStore.exists(jobs_hash):
+                rnd_idx = RandomStore.get(jobs_hash)
+            else:
+                rnd_idx = random.randint(0, math.factorial(len(jobs)) - 1)
+                RandomStore.add(jobs_hash, rnd_idx)
+
             jobs_permutation = itertools.permutations(jobs)
             i = -1
-            rnd_idx = random.randint(0, math.factorial(len(jobs)) - 1)
             for permutation in jobs_permutation:
                 i += 1
                 if i != rnd_idx:
@@ -758,5 +777,6 @@ class _Blossom_Same(object):
         
         return gpu_packing
 
+RandomStore = _RandomStore()
 
 Blossom_Same = _Blossom_Same()
