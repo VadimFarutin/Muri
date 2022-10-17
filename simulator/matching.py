@@ -147,7 +147,7 @@ class _Packing(object):
                     TT_all = TT
                     self.best_permutation = (jobs[0], None, jobs[1])
         elif ordering==3: # random ordering
-            jobs_hash = hash(sorted(jobs, key=lambda x: x.job_idx))
+            jobs_hash = hash(tuple(sorted(jobs, key=lambda x: x.job_idx)))
             if RandomStore.exists(jobs_hash):
                 rnd_idx = RandomStore.get(jobs_hash)
             else:
